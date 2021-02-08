@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require("inquirer");
 const figlet = require("figlet");
+const cTable = require("console.table");
 
 const { whatDo, add, view, update } = require("./questions");
 const viewing = require("./view");
@@ -55,33 +56,36 @@ async function viewDRE() {
             // console.log(1);
             connection.query("SELECT * FROM Departments", (err, res) => {
                 if (err) console.log(err);
-                console.log(res);
+                console.table(res);
+                return employeeManager();
             });
             break;
         case "Roles":
-            connection.query("SELECT * FROM Roles", (err, res) => {
+            connection.query("select Roles.id, title, salary, department_name FROM Roles INNER JOIN Departments ON department_id = departments.id", (err, res) => {
                 if (err) console.log(err);
-                console.log(res);
+                console.table(res);
+                return employeeManager();
             });
-            // console.log(2);
             break;
         case "Employees":
-            connection.query("SELECT * FROM Employees", (err, res) => {
+            connection.query("SELECT Employees.id, first_name, last_name, title, salary, department_name, manager_id FROM Employees INNER JOIN Roles ON Employees.roles_id = Roles.id INNER JOIN departments ON department_id = departments.id", (err, res) => {
                 if (err) console.log(err);
-                console.log(res);
+                console.table(res);
+                return employeeManager();
             });
             // console.log(3);
             break;
         case "Exit":
+            return employeeManager();
             // console.log(4);
             break;
     };
-}
+};
 
 async function updateDRE() {
     const input = await inquirer.prompt(update);
     console.log(input);
-}
+};
 
 
 connection.connect((err) => {
