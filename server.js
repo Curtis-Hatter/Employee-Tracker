@@ -3,9 +3,8 @@ const inquirer = require("inquirer");
 const figlet = require("figlet");
 const cTable = require("console.table");
 
-const { whatDo, add, view, update } = require("./questions");
-const viewing = require("./view");
-const { create } = require('domain');
+const { whatDo, add, view, update, addDepartment } = require("./questions");
+// const addDepot = require("./view");
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -44,9 +43,30 @@ const employeeManager = async () => {
     };
 };
 
+//ADD, VIEW, OR UPDATE DEPARTMENT, ROLES, OR EMPLOYEES
+
 async function addDRE() {
     const input = await inquirer.prompt(add);
-    console.log(input);
+    // console.log(input);
+    switch (input.add) {
+        case "Departments":
+
+            addDepot();
+            // console.log(1);
+            break;
+        case "Roles":
+
+            break;
+        case "Employees":
+
+            // console.log(3);
+            break;
+        case "Exit":
+            return employeeManager();
+        // console.log(4);
+        default:
+            return employeeManager();
+    };
 }
 
 async function viewDRE() {
@@ -77,8 +97,9 @@ async function viewDRE() {
             break;
         case "Exit":
             return employeeManager();
-            // console.log(4);
-            break;
+        // console.log(4);
+        default:
+            return employeeManager();
     };
 };
 
@@ -87,6 +108,28 @@ async function updateDRE() {
     console.log(input);
 };
 
+//------------------------------------------------------------------------------------------------------------------------//
+
+//ADD DEPOT ROLES OR EMPLOYEE
+async function addDepot() {
+    const input = await inquirer.prompt(addDepartment);
+    // console.log(input);
+    connection.query("INSERT INTO Departments SET ?", (input), (err, res) => {
+        if (err) console.log(err);
+        console.log(`${res.affectedRows} department created! \n`);
+        return employeeManager();
+    });
+};
+
+// async function addRole() {
+//     const input = await inquirer.prompt(addDepartment);
+//     // console.log(input);
+//     connection.query("INSERT INTO Departments SET ?", (input), (err, res) => {
+//         if (err) console.log(err);
+//         console.log(`${res.affectedRows} department created! \n`);
+//         return employeeManager();
+//     });
+// };
 
 connection.connect((err) => {
     if (err) throw err;
