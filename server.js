@@ -57,7 +57,7 @@ async function addDRE() {
             addRol()
             break;
         case "Employees":
-
+            addEmployee();
             // console.log(3);
             break;
         case "Exit":
@@ -103,10 +103,35 @@ async function viewDRE() {
 };
 
 async function updateDRE() {
-    const input = await inquirer.prompt(update);
-    console.log(input);
-};
-
+    connection.query("SELECT * FROM Employees", (err, res) => {
+        if (err) throw err;
+        // console.log(res);
+        const employeestochoosefrom = [];
+        res.forEach(employee => {
+            let employeeName = employee.first_name + " " + employee.last_name;
+            employeestochoosefrom.push(employeeName);
+        });
+        employeestochoosefrom.push("None");
+        inquirer.prompt({
+            type: "list",
+            message: "Which employee would you like to update? ",
+            name: "update",
+            choices: employeestochoosefrom
+        }).then(answers => {
+            // console.log(answers);
+            if (answers.update === "None") {
+                console.log("No Employee assigned!");
+                return employeeManager();
+            }
+            const empName = answers.update.split(" ", 1);
+            const lastName = answers.update.slice(empName[0].length + 1);
+            empName.push(lastName);
+            // console.log(empName);
+            updateEmployee(empName);
+        });
+        // console.log(input);
+    });
+}
 //------------------------------------------------------------------------------------------------------------------------//
 
 //ADD DEPOT ROLES OR EMPLOYEE
@@ -125,7 +150,6 @@ function addRol() {
     // const input = await inquirer.prompt(addRole);
     // console.log(input);
     // console.log(parseFloat(input.salary));
-
     connection.query("SELECT * FROM Departments", (err, res) => {
         if (err) console.log(err);
         // res.forEach(department => {
@@ -184,11 +208,11 @@ function addRol() {
     });
 };
 
+//ADD EMPLOYEE FUNCTION
 function addEmployee() {
     connection.query("SELECT * FROM Roles", (err, res) => {
         if (err) console.log(err);
         // console.table(res);
-
         inquirer
             .prompt([
                 {
@@ -215,7 +239,6 @@ function addEmployee() {
                 }
             ]).then(answers => {
                 // console.log(answers);
-
                 let rolesid = 0;
                 res.forEach(role => {
                     if (role.title === answers.role) {
@@ -237,13 +260,11 @@ function addEmployee() {
                         return updateEmployee([answers.first_name, answers.last_name]);
                     }
                 );
-
-
-
             });
     });
 };
 
+//UPDATE EMPLOYEE
 function updateEmployee(employName) {
     //*********PLUG FOR UPDATING EMPLOYEE */
     connection.query("SELECT * FROM Employees", (err, res) => {
