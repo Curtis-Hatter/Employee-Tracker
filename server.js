@@ -3,7 +3,7 @@ const inquirer = require("inquirer");
 const figlet = require("figlet");
 const cTable = require("console.table");
 
-const { whatDo, add, view, update, addDepartment } = require("./questions");
+const { whatDo, add, view, addDepartment } = require("./questions");
 // const addDepot = require("./view");
 
 const connection = mysql.createConnection({
@@ -102,7 +102,7 @@ async function viewDRE() {
     };
 };
 
-async function updateDRE() {
+function updateDRE() {
     connection.query("SELECT * FROM Employees", (err, res) => {
         if (err) throw err;
         // console.log(res);
@@ -127,11 +127,64 @@ async function updateDRE() {
             const lastName = answers.update.slice(empName[0].length + 1);
             empName.push(lastName);
             // console.log(empName);
-            updateEmployee(empName);
+            // updateEmployee(empName);
+            connection.query("SELECT * FROM Roles", (err, res) => {
+                if (err) console.log(err);
+                inquirer.prompt(
+                    {
+                        name: "role",
+                        type: "list",
+                        choices() {
+                            const rolestochoosefrom = [];
+                            res.forEach(({ title }) => {
+                                rolestochoosefrom.push(title);
+                            });
+                            return rolestochoosefrom;
+                        },
+                        message: "What Role? ",
+                    }
+                ).then(answers => {
+                    console.log(answers);
+                    let rolesid = 0;
+                    res.forEach(role => {
+                        if (role.title === answers.role) {
+                            // console.log(depot_id);
+                            // console.log(role.id);
+                            rolesid = role.id;
+                        };
+                    });
+                    // console.log(rolesid);
+                    let employeeID = 0;
+                    // console.log(empName);
+                    connection.query("SELECT id FROM Employees WHERE first_name=? AND last_name=?", empName, (err, res) => {
+                        if (err) throw err;
+                        // console.log(res);
+                        // console.log(res.id);
+                        employeeID = res[0].id;
+                        // console.log(employeeID);
+                        console.log(employeeID);
+                        console.log(rolesid);
+                        connection.query("UPDATE Employees SET ? WHERE ?",
+                            [{
+                                roles_id: rolesid,
+                            },
+                            {
+                                id: employeeID,
+                            }], (err, res) => {
+                                if (err) console.log(err);
+                                console.log("New Role Set \n");
+                                return employeeManager();
+                            });
+                    });
+                    // console.log(employeeID);
+                    // console.log(rolesid);
+
+                });
+            });
         });
         // console.log(input);
     });
-}
+};
 //------------------------------------------------------------------------------------------------------------------------//
 
 //ADD DEPOT ROLES OR EMPLOYEE

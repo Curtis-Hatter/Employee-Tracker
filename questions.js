@@ -21,12 +21,6 @@ const view = [{
     choices: ["Departments", "Roles", "Employees", "Exit"]
 }];
 
-const update = [{
-    type: "input",
-    message: "Which employee would you like to update? ",
-    name: "update"
-}];
-
 //------------------------------------------------//
 
 // Add Department Roles or Employee Questions
@@ -54,4 +48,4 @@ const addDepartment = [{
 //     choices: departmentstochoosefrom
 // }];
 
-module.exports = { whatDo, add, view, update, addDepartment };
+module.exports = { whatDo, add, view, addDepartment };
