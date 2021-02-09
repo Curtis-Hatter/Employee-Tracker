@@ -144,7 +144,7 @@ function updateDRE() {
                         message: "What Role? ",
                     }
                 ).then(answers => {
-                    console.log(answers);
+                    // console.log(answers);
                     let rolesid = 0;
                     res.forEach(role => {
                         if (role.title === answers.role) {
@@ -162,8 +162,8 @@ function updateDRE() {
                         // console.log(res.id);
                         employeeID = res[0].id;
                         // console.log(employeeID);
-                        console.log(employeeID);
-                        console.log(rolesid);
+                        // console.log(employeeID);
+                        // console.log(rolesid);
                         connection.query("UPDATE Employees SET ? WHERE ?",
                             [{
                                 roles_id: rolesid,
@@ -299,7 +299,7 @@ function addEmployee() {
                         rolesid = role.id;
                     };
                 });
-                console.log(rolesid);
+                // console.log(rolesid);
                 connection.query(
                     "INSERT INTO Employees SET ?",
                     {
@@ -370,7 +370,7 @@ function updateEmployee(employName) {
                         ], (err, res) => {
                             if (err) throw err;
                             // console.log(res);
-                            console.log("Manager Set!");
+                            console.log("Manager Set! \n");
                             return employeeManager();
                         });
                 });
@@ -390,7 +390,7 @@ function updateEmployee(employName) {
 
 connection.connect((err) => {
     if (err) throw err;
-    console.log(`connected as id ${connection.threadId}`);
+    // console.log(`connected as id ${connection.threadId}`);
 
     // function viewing(userChoice) {
     //     connection.query("SELECT * FROM ?", (connection.database.userChoice), (err, res) => {
