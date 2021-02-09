@@ -94,10 +94,100 @@ async function addRol() {
     });
 };
 
+function addEmployee() {
+    connection.query("SELECT * FROM Roles", (err, res) => {
+        if (err) console.log(err);
+        // console.table(res);
+
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "First Name? ",
+                    name: "first_name"
+                },
+                {
+                    type: "input",
+                    message: "Last Name? ",
+                    name: "last_name"
+                },
+                {
+                    name: "role",
+                    type: "list",
+                    choices() {
+                        const rolestochoosefrom = [];
+                        res.forEach(({ title }) => {
+                            rolestochoosefrom.push(title);
+                        });
+                        return rolestochoosefrom;
+                    },
+                    message: "What Role? ",
+                }
+            ]).then(answers => {
+                // console.log(answers);
+
+                let rolesid = 0;
+                res.forEach(role => {
+                    if (role.title === answers.role) {
+                        // console.log(depot_id);
+                        rolesid = role.id;
+                    };
+                });
+                console.log(rolesid);
+                connection.query(
+                    "INSERT INTO Employees SET ?",
+                    {
+                        first_name: answers.first_name,
+                        last_name: answers.last_name,
+                        roles_id: rolesid,
+                    },
+                    (err) => {
+                        if (err) throw err;
+                        console.log(`Employee created! \n`);
+                        updateEmployee();
+                        return employeeManager();
+                    }
+                );
+
+
+
+            });
+    });
+};
+
+function updateEmployee() {
+    //*********PLUG FOR UPDATING EMPLOYEE */
+    connection.query("SELECT first_name,last_name FROM Employees", (err, res) => {
+        if (err) throw err;
+        // console.log(res);
+        const employeestochoosefrom = [];
+        res.forEach(employee => {
+            let employeeName = employee.first_name + " " + employee.last_name;
+            employeestochoosefrom.push(employeeName);
+        });
+        employeestochoosefrom.push("None");
+        // console.log(employeestochoosefrom);
+        inquirer
+            .prompt([
+                {
+                    name: "hasManager",
+                    type: "list",
+                    choices: employeestochoosefrom,
+                    message: "Any Manager? ",
+
+                }]).then(answers => {
+                    console.log(answers);
+
+
+                });
+    });
+}
+
 connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
 
     //my function here
-    addRol();
+    // addRol();
+    addEmployee();
 });

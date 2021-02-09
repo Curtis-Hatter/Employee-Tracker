@@ -50,12 +50,11 @@ async function addDRE() {
     // console.log(input);
     switch (input.add) {
         case "Departments":
-
             addDepot();
             // console.log(1);
             break;
         case "Roles":
-
+            addRol()
             break;
         case "Employees":
 
@@ -120,6 +119,71 @@ async function addDepot() {
         return employeeManager();
     });
 };
+
+//ADD ROLE 
+function addRol() {
+    // const input = await inquirer.prompt(addRole);
+    // console.log(input);
+    // console.log(parseFloat(input.salary));
+
+    connection.query("SELECT * FROM Departments", (err, res) => {
+        if (err) console.log(err);
+        // res.forEach(department => {
+        //     departmentstochoosefrom.push(department.department_name);
+        // });
+        // console.log(departmentstochoosefrom);
+        // return employeeManager();
+        // console.log(res);
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "Title of the role? ",
+                name: "title"
+            },
+            {
+                type: "input",
+                message: "Salary of the role? ",
+                name: "salary"
+            },
+            {
+                name: "add",
+                type: "list",
+                choices() {
+                    const departmentstochoosefrom = [];
+                    res.forEach(({ department_name }) => {
+                        departmentstochoosefrom.push(department_name);
+                    });
+                    return departmentstochoosefrom;
+                },
+                message: "What Department? ",
+            }
+        ]).then((answers) => {
+            // console.log(answers);
+            let depot_id = 0;
+            res.forEach(department => {
+                if (department.department_name === answers.add) {
+                    // console.log(depot_id);
+                    depot_id = department.id;
+                };
+            });
+            // console.log(depot_id);
+            connection.query(
+                "INSERT INTO Roles SET ?",
+                {
+                    title: answers.title,
+                    salary: parseFloat(answers.salary),
+                    department_id: depot_id
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log(`Role created! \n`);
+                    return employeeManager();
+                }
+            );
+        });
+    });
+};
+
 
 // async function addRole() {
 //     const input = await inquirer.prompt(addDepartment);
