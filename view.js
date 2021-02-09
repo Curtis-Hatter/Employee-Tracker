@@ -144,8 +144,8 @@ function addEmployee() {
                     (err) => {
                         if (err) throw err;
                         console.log(`Employee created! \n`);
-                        updateEmployee();
-                        return employeeManager();
+                        updateEmployee([answers.first_name, answers.last_name]);
+                        // return employeeManager();
                     }
                 );
 
@@ -155,9 +155,9 @@ function addEmployee() {
     });
 };
 
-function updateEmployee() {
+function updateEmployee(employName) {
     //*********PLUG FOR UPDATING EMPLOYEE */
-    connection.query("SELECT first_name,last_name FROM Employees", (err, res) => {
+    connection.query("SELECT * FROM Employees", (err, res) => {
         if (err) throw err;
         // console.log(res);
         const employeestochoosefrom = [];
@@ -173,15 +173,47 @@ function updateEmployee() {
                     name: "hasManager",
                     type: "list",
                     choices: employeestochoosefrom,
-                    message: "Any Manager? ",
+                    message: "Assign a manager? ",
 
                 }]).then(answers => {
-                    console.log(answers);
+                    // console.log(answers);
+                    const empName = answers.hasManager.split(" ", 1);
+                    const lastName = answers.hasManager.slice(empName[0].length + 1);
+                    empName.push(lastName);
+                    // console.log(firstName);
+                    // console.log([lastName]);
+                    let employeeID = 0;
+                    // console.log(employName);
+                    connection.query("SELECT id FROM Employees WHERE first_name=? AND last_name=?", employName, (err, res) => {
+                        if (err) throw err;
+                        // console.log(res);
+                        // console.log(res.id);
+                        employeeID = res[0].id;
+                        // console.log(employeeID);
+                    });
 
+                    connection.query("SELECT id FROM Employees WHERE first_name=? AND last_name=?", empName, (err, res) => {
+                        // console.log(res);
+                        connection.query("UPDATE Employees SET ? WHERE ?",
+                            [
+                                {
+                                    manager_id: res[0].id,
+                                },
+                                {
+                                    id: employeeID,
+                                },
+                            ], (err, res) => {
+                                if (err) throw err;
+                                // console.log(res);
+                                console.log("Manager Set!");
+                            });
+                    });
 
                 });
     });
 }
+
+
 
 connection.connect((err) => {
     if (err) throw err;
@@ -189,5 +221,6 @@ connection.connect((err) => {
 
     //my function here
     // addRol();
-    addEmployee();
+    // addEmployee(["Curt", "Hatt"]);
+    updateEmployee(["Curt", "Hatt"]);
 });
