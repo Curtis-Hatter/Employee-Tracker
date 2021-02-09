@@ -144,8 +144,7 @@ function addEmployee() {
                     (err) => {
                         if (err) throw err;
                         console.log(`Employee created! \n`);
-                        updateEmployee([answers.first_name, answers.last_name]);
-                        // return employeeManager();
+                        return updateEmployee([answers.first_name, answers.last_name]);
                     }
                 );
 
@@ -177,6 +176,10 @@ function updateEmployee(employName) {
 
                 }]).then(answers => {
                     // console.log(answers);
+                    if (answers.hasManager === "None") {
+                        console.log("No manager assigned!");
+                        return employeeManager();
+                    }
                     const empName = answers.hasManager.split(" ", 1);
                     const lastName = answers.hasManager.slice(empName[0].length + 1);
                     empName.push(lastName);
@@ -197,7 +200,7 @@ function updateEmployee(employName) {
                         connection.query("UPDATE Employees SET ? WHERE ?",
                             [
                                 {
-                                    manager_id: res[0].id,
+                                    manager_id: res[0].id || null,
                                 },
                                 {
                                     id: employeeID,
@@ -206,12 +209,13 @@ function updateEmployee(employName) {
                                 if (err) throw err;
                                 // console.log(res);
                                 console.log("Manager Set!");
+                                return employeeManager();
                             });
                     });
 
                 });
     });
-}
+};
 
 
 
@@ -221,6 +225,6 @@ connection.connect((err) => {
 
     //my function here
     // addRol();
-    // addEmployee(["Curt", "Hatt"]);
-    updateEmployee(["Curt", "Hatt"]);
+    addEmployee();
+    // updateEmployee(["Curt", "Hatt"]);
 });
