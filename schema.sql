@@ -5,9 +5,9 @@ CREATE DATABASE Company_db;
 -- RUN TO CREATE TABLES
 USE Company_db;
 -- Creating tables necessary
-CREATE TABLE Department(
+CREATE TABLE Departments(
   id INT AUTO_INCREMENT,
-  name VARCHAR(30),
+  department_name VARCHAR(30),
   PRIMARY KEY (id)
 );
 CREATE TABLE roles(
@@ -15,22 +15,15 @@ CREATE TABLE roles(
   title VARCHAR(30),
   salary DECIMAL(7, 2),
   department_id INT NOT NULL,
-  FOREIGN KEY(department_id) REFERENCES Department(id),
+  FOREIGN KEY(department_id) REFERENCES Departments(id),
   PRIMARY KEY (id)
 );
-CREATE TABLE employee(
+CREATE TABLE employees(
   id INT AUTO_INCREMENT,
   first_name VARCHAR(30),
   last_name VARCHAR(30),
   roles_id INT NOT NULL,
+  manager_id INT,
   FOREIGN KEY(roles_id) REFERENCES roles(id),
   PRIMARY KEY(id)
 );
-INSERT INTO
-  Department (name)
-VALUES
-  ("Warehouse");
-INSERT INTO
-  Department(name)
-VALUES
-  ("Retail");

@@ -74,7 +74,8 @@ async function viewDRE() {
             });
             break;
         case "Employees":
-            connection.query("SELECT Employees.id, first_name, last_name, title, salary, department_name, manager_id FROM Employees INNER JOIN Roles ON Employees.roles_id = Roles.id INNER JOIN departments ON department_id = departments.id", (err, res) => {
+            //MEGAN HELPED BIG TIME!!!!!!!!! CREDIT GOES TO HER!!!
+            connection.query("SELECT employees.id AS ID, CONCAT_WS(', ', employees.last_name, employees.first_name) AS Name, roles.title AS Role, roles.salary AS Salary, departments.department_name AS Department, CONCAT_WS(', ', managerInfo.last_name, managerInfo.first_name) AS Manager FROM employees INNER JOIN roles ON employees.roles_id = roles.id LEFT JOIN departments on roles.department_id = departments.id LEFT JOIN employees AS managerInfo on employees.manager_id = managerInfo.id ORDER by Name;", (err, res) => {
                 if (err) console.log(err);
                 console.table(res);
                 return employeeManager();
