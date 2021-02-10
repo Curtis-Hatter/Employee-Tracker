@@ -1,24 +1,11 @@
-const mysql = require('mysql');
+// const mysql = require('mysql');
 const inquirer = require("inquirer");
 const figlet = require("figlet");
 const cTable = require("console.table");
+const connection = require("./db");
 
 const { whatDo, add, view, addDepartment } = require("./questions");
 // const addDepot = require("./view");
-
-const connection = mysql.createConnection({
-    host: 'localhost',
-
-    // Your port, if not 3306
-    port: 3306,
-
-    // Your username
-    user: 'root',
-
-    // Be sure to update with your own MySQL password!
-    password: 'Ch@tt259263',
-    database: 'Company_db',
-});
 
 const employeeManager = async () => {
     const input = await inquirer.prompt(whatDo);
